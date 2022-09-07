@@ -11,10 +11,10 @@ import numpy as np
 IMG_SIZE = 192
 
 
-linknet_augment = sm.Linknet(classes=8)
-linknet_augment.compile( optimizer='adam', loss=sm.losses.bce_jaccard_loss, metrics=[sm.metrics.iou_score])
-linknet_augment._name = 'Linknet_augmented_input'
-linknet_augment.load_weights('linknet_augment.h5')
+model_seg = sm.Linknet(classes=8)
+model_seg.compile( optimizer='adam', loss=sm.losses.bce_jaccard_loss, metrics=[sm.metrics.iou_score])
+model_seg._name = 'Linknet_augmented_input'
+model_seg.load_weights('model.h5')
 
 
 app = Flask(__name__)
@@ -28,7 +28,7 @@ def predict_mask(image):
     image = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
     image = image.astype(np.float32) / 255.0
     image = np.expand_dims(image, axis=0)
-    pred = linknet_augment.predict(image)
+    pred = model_seg.predict(image)
     pred = pred.reshape(IMG_SIZE, IMG_SIZE, 8)
     return pred
 
